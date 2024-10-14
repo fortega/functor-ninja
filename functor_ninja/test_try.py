@@ -1,4 +1,4 @@
-from functor_ninja.monad import Try, Success, Fail
+from functor_ninja import Try, Success, Fail
 
 
 def test_success():
