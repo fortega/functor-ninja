@@ -12,4 +12,4 @@ jobs:
       - name: Install dependencies
         run: pip install poetry && poetry install --with dev
       - name: Run tests
-        run: pytest -s
+        run: python -m pytest -s
