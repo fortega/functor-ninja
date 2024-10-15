@@ -1,0 +1,17 @@
+name: Publish
+on:
+- pull_request
+jobs:
+  Pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@5
+        with:
+          python-version: 3.10
+      - name: Install dependencies
+        run: pip install poetry && poetry install --no-root
+      - name: Build
+        run: poetry build
+      - name: Publish
+        run: poetry publish -u ${{ secrets.USER }} -p {{ secrets.PASSWORD }}
