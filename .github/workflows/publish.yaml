@@ -18,4 +18,4 @@ jobs:
       - name: Publish
         run: poetry publish
         env:
-          POETRY_PYPI_TOKEN_PYPI=${{ secrets.PASSWORD }}
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PASSWORD }}
