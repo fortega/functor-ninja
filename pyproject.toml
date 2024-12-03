@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "functor-ninja"
-version = "0.1.0"
+version = "0.1.1"
 description = "Functors and Monads for data processing"
 authors = ["Felipe Ortega <felipeortegabustamante@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.9"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
