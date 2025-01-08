@@ -28,6 +28,12 @@ class Try(Monad[A]):
             return result
         except Exception as e:
             return Fail(e)
+        
+    def is_success(self) -> bool:
+        return isinstance(self, Success)
+    
+    def is_fail(self) -> bool:
+        return isinstance(self, Fail)
 
 
 class Success(Try[A]):
