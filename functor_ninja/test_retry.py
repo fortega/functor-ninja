@@ -2,7 +2,7 @@ from functor_ninja import Retry
 from copy import copy
 
 def test_map_fail():
-    output = Retry(attempts=1, value=0).map(lambda _: 1/0)
+    output = Retry(attempts=1, value=0, wait_secs=0).map(lambda _: 1/0)
     assert output.is_fail()
 
 def test_map_ok():
