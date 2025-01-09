@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "functor-ninja"
-version = "0.2.0"
+version = "0.3.0"
 description = "Functors and Monads for data processing"
 authors = ["Felipe Ortega <felipeortegabustamante@gmail.com>"]
 readme = "README.md"

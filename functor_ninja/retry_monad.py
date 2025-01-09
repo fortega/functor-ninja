@@ -1,13 +1,15 @@
 from functor_ninja.monad import Monad, A, B, Callable
 from functor_ninja import Try
+from time import sleep
 
 NO_ATTEMPTS = 0
 
 
 class Retry(Monad[A]):
-    def __init__(self, attempts: int, value: A):
+    def __init__(self, attempts: int, value: A, wait_secs: float = 3.0):
         self.attempts = attempts
         self.value = value
+        self.wait_secs = wait_secs
 
     def map(self, f: Callable[[A], B]) -> "Retry[B]":
         def op(left: int) -> Try[B]:
@@ -17,6 +19,8 @@ class Retry(Monad[A]):
             else:
                 if left > NO_ATTEMPTS:
                     new_left = left - 1
+                    print("wait", self.wait_secs, "secs")
+                    sleep(self.wait_secs)
                     return op(left=new_left)
                 else:
                     return Retry(attempts=NO_ATTEMPTS, value=result.value)
@@ -28,14 +32,13 @@ class Retry(Monad[A]):
     def is_success(self) -> bool:
         return not self.is_fail()
 
-    @staticmethod
-    def flat(v: "Retry[Retry[A]]") -> "Retry[A]":
-        if v.is_fail():
-            return v
+    def flatten(self) -> "Retry[A]":
+        if self.is_fail():
+            return self
         else:
-            return v.value
+            return self.value
 
     def flat_map(self, f: Callable[[A], "Retry[B]"]) -> "Retry[B]":
         nested = self.map(f)
-        result = Retry.flat(nested)
+        result = nested.flatten()
         return result
