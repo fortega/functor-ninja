@@ -5,26 +5,34 @@ from time import sleep
 NO_ATTEMPTS = 0
 
 
+def fixed_wait(v: float) -> Callable[[int], float]:
+    return lambda _: v
+
+
+def linear_wait(factor: float) -> Callable[[int], float]:
+    return lambda v: factor * v
+
+
 class Retry(Monad[A]):
-    def __init__(self, attempts: int, value: A, wait_secs: float = 3.0):
+    def __init__(self, attempts: int, value: A, wait_funtion_secs: Callable[[int], float] = fixed_wait(3.0)):
         self.attempts = attempts
         self.value = value
-        self.wait_secs = wait_secs
+        self.wait_funtion_secs = wait_funtion_secs
 
     def map(self, f: Callable[[A], B]) -> "Retry[B]":
-        def op(left: int) -> Try[B]:
+        def op(attempt: int) -> Try[B]:
             result = Try(self.value).map(f)
             if result.is_success():
                 return Retry(attempts=self.attempts, value=result.value)
             else:
-                if left > NO_ATTEMPTS:
-                    new_left = left - 1
-                    print("wait", self.wait_secs, "secs")
-                    sleep(self.wait_secs)
-                    return op(left=new_left)
-                else:
+                if attempt >= self.attempts:
                     return Retry(attempts=NO_ATTEMPTS, value=result.value)
-        return op(left=self.attempts) if self.is_success() else self
+                else:
+                    new_attempt = attempt + 1
+                    wait_secs = self.wait_funtion_secs(attempt)
+                    sleep(wait_secs)
+                    return op(attempt=new_attempt)
+        return op(attempt=1) if self.is_success() else self
 
     def is_fail(self) -> bool:
         return self.attempts == NO_ATTEMPTS
